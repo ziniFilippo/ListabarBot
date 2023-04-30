@@ -26,16 +26,18 @@ public class JavaBossBot extends TelegramLongPollingBot {
 	private String botToken;
 
 	public String getBotUsername() {
-		LOG.info(env.getProperty("botUsername"));
+		//LOG.info(env.getProperty("botUsername"));
 		LOG.info(botUsername);
+		//LOG.info(System.getenv("telegram.username"));
 		return botUsername;
 	}
 
 	@Override
 	@Deprecated
 	public String getBotToken() {
-		LOG.info(env.getProperty("botToken"));
+		//LOG.info(env.getProperty("botToken"));
 		LOG.info(botToken);
+		//LOG.info(System.getenv("telegram.token"));
 		return botToken;
 	}
 
