@@ -2,32 +2,30 @@ package it.paleocapa.mastroiannim;
 
 import java.util.*;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Configuration;
-
-
-@RefreshScope
-@Configuration
 public class Ordinazione {
-    HashMap<String, Double> menu;
+    private LinkedList<Prodotto> menu;
 
-    @Value("${menu.items}")
-    private String[] menuItems = {"Brioche-cioccolato=0.90", "Brioche-marmellata=0.90"};
-
-    public Ordinazione(){
-        menu =  new HashMap<>();
-        for (String menuItem : menuItems) {
-            String[] menuItemParts = menuItem.split("=");
-            String itemName = menuItemParts[0];
-            Double itemPrice = Double.parseDouble(menuItemParts[1]);
-            menu.put(itemName, itemPrice);
-        }
+    
+    public Ordinazione(LinkedList<Prodotto>menu){
+        this.menu = menu;
     }
+
+    public double searchItem(String prodotto){
+        for (Prodotto prod : menu) {
+            if(prod.nome.equals(prodotto)){
+                return prod.prezzo;
+            }
+        }
+        return 0.0;
+    }
+
     @Override
-    public String toString(){
-        String msg = menu.keySet().stream().map(x -> x + ": "+ String.valueOf(menu.get(x)) +"€").reduce("", String::concat);
+    public String toString() {
+        //String msg = menu.keySet().stream().map(x -> x.toString() + ": " + String.valueOf(menu.get(x)) + "€").reduce("", String::concat);
+        String msg="";
+        for (Prodotto p : menu) {
+            msg+=p.nome+": "+ String.valueOf(p.prezzo)+"€\n";
+        }
         return msg;
     }
-
 }

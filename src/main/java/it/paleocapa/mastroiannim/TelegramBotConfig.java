@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Configuration
+
 public class TelegramBotConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(TelegramBotConfig.class);
@@ -22,11 +23,15 @@ public class TelegramBotConfig {
     @Value("${telegram.token}")
     private String botToken;
 
+    @Value("${menu.items}")
+    private String menuItems;
+    
     @Bean
     public TelegramLongPollingBot telegramBot() {
         LOG.info(botToken);
         LOG.info(botUsername);
-        return JavaBossBot.getJavaBossBotInstance(botUsername, botToken);
+        LOG.info("menuItems: {}", menuItems);
+        return JavaBossBot.getJavaBossBotInstance(botUsername, botToken,menuItems);
     }
 
     @Bean
