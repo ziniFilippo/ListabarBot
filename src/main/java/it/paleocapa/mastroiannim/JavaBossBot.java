@@ -1,5 +1,6 @@
 package it.paleocapa.mastroiannim;
 
+import org.telegram.telegrambots.meta.api.objects.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,17 +41,30 @@ public class JavaBossBot extends TelegramLongPollingBot {
 	public String getBotUsername() {
 		return botUsername;
 	}
+	public void order(long id, Message msg){
+		SendMessage message = new SendMessage();
+			message.setChatId(id);
+			Ordinazione o = new Ordinazione();
+			message.setText("Cosa vuoi ordinare?\n\n"+o.toString());
 
+			try {
+				execute(message);
+			} catch (TelegramApiException e) {
+				LOG.error(e.getMessage());
+			}
+	}
 	@Override
 	public void onUpdateReceived(Update update) {
-		if (update.hasMessage() && update.getMessage().hasText()) {
-			
-			long chatId = update.getMessage().getChatId();
-			
+		Message msg = update.getMessage();
+		User user = msg.getFrom();
+		long id = user.getId();
+		if(msg.getText().equals("/order")){
+			order(id,msg);
+		} else {
 			SendMessage message = new SendMessage();
-			message.setChatId(chatId);
+			message.setChatId(id);
 			message.setText("Benvenuto! Come posso aiutarti?");
-			
+
 			try {
 				execute(message);
 			} catch (TelegramApiException e) {
