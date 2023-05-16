@@ -58,32 +58,11 @@ public class JavaBossBot extends TelegramLongPollingBot {
 	public LinkedList<Prodotto> getMenu() {
 		return menu;
 	}
-	public void order(long id, Message msg){
-		SendMessage message = new SendMessage();
-			message.setChatId(id);
-			Ordinazione o = new Ordinazione(menu);
-			if (message.getText().equals("/order")) {
-				message.setText("Cosa vuoi ordinare?");
-			} else {
-				String ordine = msg.getText();
-				if(o.searchItem(ordine)!=0.0){
-
-				}
-			}
-			try {
-				execute(message);
-			} catch (TelegramApiException e) {
-				LOG.error(e.getMessage());
-			}
-	}
 	@Override
 	public void onUpdateReceived(Update update) {
 		Message msg = update.getMessage();
 		User user = msg.getFrom();
 		long id = user.getId();
-		if(msg.getText().equals("/order")){
-			order(id,msg);
-		}
 		if(msg.getText().equals("/menu")){
 			SendMessage message = new SendMessage();
 			message.setChatId(id);
@@ -94,27 +73,40 @@ public class JavaBossBot extends TelegramLongPollingBot {
 			} catch (TelegramApiException e) {
 				LOG.error(e.getMessage());
 			}
+			return;
 		}
 		if(msg.getText().equals("/start")){
 			SendMessage message = new SendMessage();
 			message.setChatId(id);
-			message.setText("Benvenuto!Inserisci quanti soldi hai\nPer ordinare usa il comando /order\nPer visualizzare il menù usa il comando /menu");
+			message.setText("Benvenuto!\nPer ordinare usa il comando /order\nPer visualizzare il menù usa il comando /menu");
 			
 			try {
 				execute(message);
 			} catch (TelegramApiException e) {
 				LOG.error(e.getMessage());
 			}
+			return;
 		} else {
+			String[] ordine = msg.getText().split(" ");
 			SendMessage message = new SendMessage();
-			try {
-                double orderQuantity = Integer.parseInt(msg.getText());
-				message.setChatId(id);
-				conto = orderQuantity;
-                message.setText("Il tuo conto è di " + conto);
-            } catch (NumberFormatException e) {
-                message.setText("perfavore inserisci un numero");
-            }
+			message.setChatId(id);
+			for (Prodotto p: menu) {
+				if(p.nome.equals(ordine[0])){
+					message.setText("Hai ordinato :" + ordine[0] + " pagando "+ordine[1]+"€\nIl tuo resto: " + String.valueOf(Integer.valueOf(ordine[1])-p.prezzo)+"€");
+					try {
+						execute(message);
+					} catch (TelegramApiException e) {
+						LOG.error(e.getMessage());
+					}
+					return;
+				}	
+			}
+			message.setText("Perfavore scegli un prodotto");
+					try {
+						execute(message);
+					} catch (TelegramApiException e) {
+						LOG.error(e.getMessage());
+					}
 		}
 	}
 }
